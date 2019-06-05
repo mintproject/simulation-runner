@@ -20,8 +20,9 @@ def run_simulations(wings_config, model_name, simulation_matrix, **kwargs):
         for row in _utils.simulation_matrix(simulation_matrix):
             log.debug("Simulation Matrix Row: %s" % row)
             args = model.process_input(row)
-            _utils.upload_files(model, args)
-            _utils.run_template(model, args)
+            if args is not None:
+                _utils.upload_files(model, args)
+                _utils.run_template(model, args)
             break
 
 
