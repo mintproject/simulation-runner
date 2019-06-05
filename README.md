@@ -29,6 +29,8 @@ optional arguments:
 
 1. The file must define a constant `__WINGS_TEMPLATE_NAME__` whose value should be the name of the WINGS template to invoke.
 
+1. The file must define a constant `__IO_TYPES__` whose value should be a dictionary mapping the input to it's corresponding type. Only required for file types.
+
 1. The file must implement one method `process_input`, which takes one dictionary as input, and returs a dictionary as output.
 
     1. The input dictionary represents the row read from the simulation-matrix csv file.
@@ -43,6 +45,17 @@ optional arguments:
 from pathlib import Path
 
 __WINGS_TEMPLATE_NAME__ = "economic-v5-standalone"
+
+
+__IO_TYPES__ = {
+    "cycles-data": "economic-cycles-data",
+    "land-input": "economic-land-input",
+    "price": "economic-price",
+    "production-cost": "economic-production-cost",
+    "sim-price": "economic-sim-price",
+    "sim-production-cost": "economic-sim-production-cost",
+    "supply-elasticity": "economic-supply-elasticity",
+}
 
 
 def process_input(kwargs):
