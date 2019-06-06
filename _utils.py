@@ -103,13 +103,17 @@ def throttle(chunk_size=15, wait=60):
     def wrap(f):
         @functools.wraps(f)
         def wrapped_f(*args, **kwargs):
-            rv = f(*args)
-            for i, r in enumerate(rv):
-                if i % chunk_size == 0 and i != 0:
-                    log.info("Sleep for %d seconds before iteration <%d>" % (wait, i))
-                    time.sleep(wait)
-                yield r
+            wrapped_f.count += 1
+            print(wrapped_f.count)
+            if wrapped_f.count % chunk_size == 0 and wrapped_f.count != 0:
+                print(
+                    "Sleep for %d seconds before iteration <%d>"
+                    % (wait, wrapped_f.count)
+                )
+                time.sleep(wait)
+            return f(*args)
 
+        wrapped_f.count = 0
         return wrapped_f
 
     return wrap
