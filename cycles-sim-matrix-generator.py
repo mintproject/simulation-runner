@@ -26,7 +26,13 @@ column_names = [
 
 country = ['South Sudan']
 soil = ['pongo.soil']
-crop = ['Maize', 'Sorghum', 'Sesame', 'Peanuts', 'Cassava']
+crop = [
+    'Maize',
+    'Sorghum', 
+    'Sesame',
+    'Peanuts',
+    'Cassava'
+    ]
 weather = [
     'met8.88Nx27.12E.weather',
     'met8.88Nx27.38E.weather',

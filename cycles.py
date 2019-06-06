@@ -6,16 +6,14 @@ import os
 from pathlib import Path
 from string import Template
 
-__WINGS_TEMPLATE_NAME__ = "cycles-v3-standalone"
+__WINGS_TEMPLATE_NAME__ = "cycles_v2_standalone"
 
 __IO_TYPES__ = {
-    "cycles-data": "economic-cycles-data",
-    "land-input": "economic-land-input",
-    "price": "economic-price",
-    "production-cost": "economic-production-cost",
-    "sim-price": "economic-sim-price",
-    "sim-production-cost": "economic-sim-production-cost",
-    "supply-elasticity": "economic-supply-elasticity",
+    "cycles_crops": "CyclesCrops",
+    "cycles_ctrl": "CyclesCtrl",
+    "cycles_operation": "CyclesOperation",
+    "cycles_soil": "CyclesSoil",
+    "cycles_weather": "CyclesWeather",
 }
 
 
@@ -30,8 +28,8 @@ def _process_operation_file(kwargs, input_folder_dir):
             'tillage_date':  int(kwargs['start_planting_date']) + 20
         }
         result = src.substitute(op_data)
-        op_filename = kwargs['unique_id'] + '.operation'
-        with open(input_folder_dir + '/' + op_filename, 'w') as op_file:
+        op_filename = Path(input_folder_dir + '/' + kwargs['unique_id'] + '.operation')
+        with op_filename.open('w') as op_file:
             op_file.write(result)
             return op_filename
     return None
@@ -50,13 +48,13 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename):
         }
         result = src.substitute(ctrl_data)
 
-        with open(input_folder_dir + '/' + kwargs['unique_id'] + '.ctrl', 'w') as ctrl_file:
+        ctrl_filename = Path(input_folder_dir + '/' + kwargs['unique_id'] + '.ctrl')
+        with ctrl_filename.open('w') as ctrl_file:
             ctrl_file.write(result)
+            return ctrl_filename
 
 
 def process_input(kwargs):
-    print(kwargs)
-
     # create input folder
     input_folder_dir = './cycles/inputs/' + kwargs['unique_id']
     if not os.path.exists(input_folder_dir):
@@ -66,16 +64,17 @@ def process_input(kwargs):
     op_filename = _process_operation_file(kwargs, input_folder_dir)
 
     # Cycles control file
-    _process_ctrl_file(kwargs, input_folder_dir, op_filename)
+    ctrl_filename = _process_ctrl_file(kwargs, input_folder_dir, op_filename.name)
 
-    return None
+    if kwargs['crop'] != 'Maize':
+        return None
 
-    # return {
-    #     "cycles-data": "file:cyclesdata.csv",
-    #     "land-input": "file:landinput.csv",
-    #     "price": "file:price.csv",
-    #     "production-cost": "file:productioncost.csv",
-    #     "sim-price": "file:simprice.csv",
-    #     "sim-production-cost": "file:simproductioncost.csv",
-    #     "supply-elasticity": "file:supplyelasticity.csv",
-    # }
+    return {
+        "cycles_crops": "file:crops.crop",
+        "cycles_ctrl": ctrl_filename,
+        "cycles_operation": op_filename,
+        "cycles_soil": "file:pongo.soil",
+        "cycles_weather": "file:" + kwargs['weather'],
+        "unique_id": kwargs['unique_id'],
+        "crop_name": kwargs['crop']
+    }
