@@ -99,7 +99,7 @@ def run_template(model, args):
             log.info("Debug mode enabled, skipping running template")
 
 
-def throttle(chunk_size=15, wait=1):
+def throttle(chunk_size=15, wait=60):
     def wrap(f):
         @functools.wraps(f)
         def wrapped_f(*args, **kwargs):
