@@ -104,7 +104,6 @@ def throttle(chunk_size=15, wait=60):
         @functools.wraps(f)
         def wrapped_f(*args, **kwargs):
             wrapped_f.count += 1
-            print(wrapped_f.count)
             if wrapped_f.count % chunk_size == 0 and wrapped_f.count != 0:
                 print(
                     "Sleep for %d seconds before iteration <%d>"
