@@ -1,4 +1,4 @@
-#!/bin/python2
+#!/usr/bin/env python2
 """Cycles Simulation Matrix Generator."""
 
 import csv
@@ -8,10 +8,10 @@ from itertools import *
 column_names = [
     'unique_id',
     'country',
+    'crop',
 	'lat',
     'long',
     'weather',
-    'crop',
     'soil',
     'start_planting_date',
     'end_planting_date',
@@ -28,7 +28,7 @@ country = ['South Sudan']
 soil = ['pongo.soil']
 crop = [
     'Maize',
-    'Sorghum', 
+    'Sorghum',
     'Sesame',
     'Peanuts',
     'Cassava'
@@ -80,8 +80,8 @@ coordinates = zip(latitute, longitude, weather)
 fertilizers = zip(nitrogen_rate, fertilizer_rate)
 
 rows = list(product(country,
-                    coordinates,
                     crop,
+                    coordinates,
                     soil,
                     start_planting_date,
                     end_planting_date,
