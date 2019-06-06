@@ -106,7 +106,7 @@ def throttle(chunk_size=15, wait=60):
             rv = f(*args)
             for i, r in enumerate(rv):
                 if i % chunk_size == 0 and i != 0:
-                    log.info("Sleep for <%d> before iteration <%d>" % (wait, i))
+                    log.info("Sleep for %d seconds before iteration <%d>" % (wait, i))
                     time.sleep(wait)
                 yield r
 
