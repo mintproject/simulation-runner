@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
+
 import configparser
+import functools
 import importlib
 import logging
 import os
+import time
 from contextlib import contextmanager
 from csv import DictReader, Sniffer
 from pathlib import Path
@@ -94,6 +97,22 @@ def run_template(model, args):
             log.info("Started run with id <%s>" % runid)
         else:
             log.info("Debug mode enabled, skipping running template")
+
+
+def throttle(chunk_size=15, wait=1):
+    def wrap(f):
+        @functools.wraps(f)
+        def wrapped_f(*args, **kwargs):
+            rv = f(*args)
+            for i, r in enumerate(rv):
+                if i % chunk_size == 0 and i != 0:
+                    log.info("Sleep for <%d> before iteration <%d>" % (wait, i))
+                    time.sleep(wait)
+                yield r
+
+        return wrapped_f
+
+    return wrap
 
 
 def simulation_matrix(sim_file):

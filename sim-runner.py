@@ -17,7 +17,8 @@ def run_simulations(wings_config, model_name, simulation_matrix, **kwargs):
     model = _utils.load_module(model_name)
     with _utils.cli(wings_config, model.__WINGS_TEMPLATE_NAME__) as (data, planner):
         model.wings = {"data": data, "planner": planner}
-        for row in _utils.simulation_matrix(simulation_matrix):
+        _throttled_func = _utils.throttle()(_utils.simulation_matrix)
+        for row in _throttled_func(simulation_matrix):
             log.debug("Simulation Matrix Row: %s" % row)
             args = model.process_input(row)
             if args is not None:
