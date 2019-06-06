@@ -33,7 +33,7 @@ def _main():
         description="Run WINGS template based on simulation matrix."
     )
     parser.add_argument(
-        "-w",
+        "-c",
         "--wings-config",
         dest="wings_config",
         required=True,
