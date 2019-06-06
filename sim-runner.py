@@ -51,7 +51,7 @@ def _main():
         help="Chunk size",
     )
     parser.add_argument(
-        "-d", "--throttle-delay", dest="wait", type=int, default=60, help="Wait time"
+        "-s", "--throttle-sleep", dest="wait", type=int, default=60, help="Sleep time"
     )
     parser.add_argument(
         "-d", "--debug", dest="debug", default=False, action="store_true", help="Debug"
