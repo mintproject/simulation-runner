@@ -2,7 +2,7 @@ SIMULATION_START_YEAR   $start_year
 SIMULATION_END_YEAR     $end_year
 ROTATION_SIZE           1
 ## SIMULATION OPTIONS ##
-USE_REINITIALIZATION    0
+USE_REINITIALIZATION    $reinit
 ADJUSTED_YIELDS         0
 HOURLY_INFILTRATION     1
 AUTOMATIC_NITROGEN      0
@@ -23,4 +23,4 @@ CROP_FILE               $crop_file
 OPERATION_FILE          $operation_file
 SOIL_FILE               $soil_file
 WEATHER_FILE            $weather_file
-REINIT_FILE             N/A
+REINIT_FILE             cycles.reinit
