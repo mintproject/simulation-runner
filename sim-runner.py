@@ -33,7 +33,7 @@ def _main():
         description="Run WINGS template based on simulation matrix."
     )
     parser.add_argument(
-        "-c",
+        "-w",
         "--wings-config",
         dest="wings_config",
         required=True,
@@ -51,7 +51,7 @@ def _main():
         help="Chunk size",
     )
     parser.add_argument(
-        "-w", "--throttle-wait", dest="wait", type=int, default=60, help="Wait time"
+        "-d", "--throttle-delay", dest="wait", type=int, default=60, help="Wait time"
     )
     parser.add_argument(
         "-d", "--debug", dest="debug", default=False, action="store_true", help="Debug"
