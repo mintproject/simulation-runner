@@ -98,7 +98,7 @@ with open('sim-matrix.csv', 'w') as f:
     w = csv.writer(f)
     w.writerow(column_names)
     for row in rows:
-        l = ['cycles-' + str(random.randint(10000,99999))]
+        l = ['cycles-' + str(random.randint(10000000,99999999))]
         for e in row:
             if e.__class__ is tuple:
                 for t in e:
