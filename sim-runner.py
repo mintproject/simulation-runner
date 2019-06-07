@@ -11,7 +11,9 @@ log = logging.getLogger()
 
 
 def run_simulations(wings_config, model_name, simulation_matrix, **kwargs):
+    debug = False
     if kwargs["debug"]:
+        debug = True
         os.environ["WINGS_DEBUG"] = "1"
 
     model = _utils.load_module(model_name)
@@ -23,9 +25,11 @@ def run_simulations(wings_config, model_name, simulation_matrix, **kwargs):
         for row in _utils.simulation_matrix(simulation_matrix):
             log.debug("Simulation Matrix Row: %s" % row)
             args = _throttled_func(row)
-            if args is not None:
+            if args is not None and debug is False:
                 _utils.upload_files(model, args)
                 _utils.run_template(model, args)
+            if debug:
+                log.debug("Debug mode, skipping upload and template run")
 
 
 def _main():
