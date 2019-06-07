@@ -20,7 +20,7 @@ def run_simulations(wings_config, model_name, simulation_matrix, **kwargs):
     with _utils.cli(wings_config, model.__WINGS_TEMPLATE_NAME__) as (data, planner):
         model.wings = {"data": data, "planner": planner}
         _throttled_func = _utils.throttle(
-            kwargs.get("chunk_size", 15), kwargs.get("chunk_size", 60)
+            kwargs.get("chunk_size", 15), kwargs.get("sleep", 60)
         )(model.process_input)
         for row in _utils.simulation_matrix(simulation_matrix):
             log.debug("Simulation Matrix Row: %s" % row)
@@ -55,7 +55,7 @@ def _main():
         help="Chunk size",
     )
     parser.add_argument(
-        "-s", "--throttle-sleep", dest="wait", type=int, default=60, help="Sleep time"
+        "-s", "--throttle-sleep", dest="sleep", type=int, default=60, help="Sleep time"
     )
     parser.add_argument(
         "-d", "--debug", dest="debug", default=False, action="store_true", help="Debug"
