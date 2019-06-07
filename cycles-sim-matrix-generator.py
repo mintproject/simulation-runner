@@ -20,6 +20,7 @@ column_names = [
     "fertilizer_rate",
     "forcing",
     "planting_date_fixed",
+    "pihm",
     "disabled",
     "notes",
 ]
@@ -59,12 +60,13 @@ longitude = [
 ]
 start_planting_date = ["100", "107", "114", "121", "128", "135", "142"]
 end_planting_date = ["149"]
-planting_date_fixed = ["True"]
+planting_date_fixed = ["True", "False"]
 fertilizer = ["urea"]
 nitrogen_rate = ["0", "25", "50", "100", "200", "400"]
 fertilizer_rate = ["0.00", "78.13", "156.25", "312.50", "625.00", "1250.00"]
 forcing = ["True", "False"]
 disabled = ["False"]
+pihm = ["True", "False"]
 notes = [" "]
 
 # dot product for coordinates
@@ -85,6 +87,7 @@ rows = list(
         fertilizers,
         forcing,
         planting_date_fixed,
+        pihm,
         disabled,
         notes,
     )
@@ -96,7 +99,7 @@ with open("sim-matrix.csv", "w") as f:
     w = csv.writer(f)
     w.writerow(column_names)
     for row in rows:
-        l = ["cycles-" + str(random.randint(10000000, 99999999))]
+        l = ["cycles-" + str(random.randint(100000000, 999999999))]
         for e in row:
             if e.__class__ is tuple:
                 for t in e:

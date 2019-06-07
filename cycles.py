@@ -27,6 +27,7 @@ def _process_operation_file(kwargs, input_folder_dir, baseline=False):
             "fertilization_date": int(kwargs["start_planting_date"]) - 10,
             "fertilization_rate": kwargs["fertilizer_rate"],
             "start_planting_date": kwargs["start_planting_date"],
+            "end_planting_date": kwargs["end_planting_date"],
             "tillage_date": int(kwargs["start_planting_date"]) + 20,
         }
         result = src.substitute(op_data)
@@ -60,6 +61,13 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False):
 
 
 def process_input(kwargs):
+    
+    if kwargs["crop"] != "Maize" or kwargs["pihm"] == "True":
+        return None
+
+    if kwargs["planting_date_fixed"] == "True":
+         kwargs["end_planting_date"] = -999
+
     # create input folder
     input_folder_dir = "./cycles/inputs/" + kwargs["unique_id"]
     if not os.path.exists(input_folder_dir):
@@ -79,9 +87,6 @@ def process_input(kwargs):
     # Main simulation
     op_filename = _process_operation_file(kwargs, input_folder_dir)
     ctrl_filename = _process_ctrl_file(kwargs, input_folder_dir, op_filename.name)
-
-    if kwargs["crop"] != "Maize":
-        return None
 
     return {
         "cycles_ctrl": baseline_ctrl_filename,
