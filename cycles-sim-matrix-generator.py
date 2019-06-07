@@ -20,7 +20,6 @@ column_names = [
     "fertilizer_rate",
     "forcing",
     "planting_date_fixed",
-    "pihm",
     "disabled",
     "notes",
 ]
@@ -66,7 +65,6 @@ nitrogen_rate = ["0", "25", "50", "100", "200", "400"]
 fertilizer_rate = ["0.00", "78.13", "156.25", "312.50", "625.00", "1250.00"]
 forcing = ["True", "False"]
 disabled = ["False"]
-pihm = ["True", "False"]
 notes = [" "]
 
 # dot product for coordinates
@@ -87,7 +85,6 @@ rows = list(
         fertilizers,
         forcing,
         planting_date_fixed,
-        pihm,
         disabled,
         notes,
     )

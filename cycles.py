@@ -61,8 +61,8 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False):
 
 
 def process_input(kwargs):
-    
-    if kwargs["crop"] != "Maize" or kwargs["pihm"] == "True":
+
+    if kwargs["crop"] != "Maize" or kwargs["forcing"] == "True":
         return None
 
     if kwargs["planting_date_fixed"] == "True":
