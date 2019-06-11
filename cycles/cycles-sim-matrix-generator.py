@@ -100,7 +100,7 @@ with open("sim-matrix.csv", "w") as f:
         for e in row:
             if e.__class__ is tuple:
                 for t in e:
-                    l.append("'" + t + "'")
+                    l.append(t)
             else:
                 l.append(e)
         w.writerow(l)
