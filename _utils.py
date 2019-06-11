@@ -126,7 +126,7 @@ def simulation_matrix(sim_file):
         raise ValueError("Invalid simulation-matrix")
 
     with open(sim_file) as csvfile:
-        dialect = Sniffer().sniff(csvfile.read(1024))
+        dialect = Sniffer().sniff(csvfile.read(4096))
         csvfile.seek(0)
         reader = DictReader(csvfile, dialect=dialect)
         for row in reader:
