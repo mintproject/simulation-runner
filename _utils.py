@@ -66,6 +66,8 @@ def login(w, password):
         finally:
             log.debug("Logout")
             w.logout()
+    else:
+        raise ValueError("WINGS login failed")
 
 
 def upload_files(model, args):
