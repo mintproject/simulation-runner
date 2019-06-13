@@ -13,9 +13,6 @@ log = logging.getLogger()
 def run_simulations(
     wings_config, model_name, simulation_matrix, debug=False, dry_run=False, **kwargs
 ):
-    if debug:
-        os.environ["WINGS_DEBUG"] = "1"
-
     model = _utils.load_module(model_name)
     with _utils.cli(wings_config, model.__WINGS_TEMPLATE_NAME__) as (data, planner):
         model.wings = {"data": data, "planner": planner}
@@ -69,11 +66,14 @@ def _main():
     )
     parser.add_argument("simulation_matrix", help="Simulation Matrix")
     args = parser.parse_args()
+    if args.debug:
+        os.environ["WINGS_DEBUG"] = "1"
+        _utils.init_logger()
+
     run_simulations(**vars(args))
 
 
 if __name__ == "__main__":
-    _utils.init_logger()
     try:
         _main()
         log.info("Done")

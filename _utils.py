@@ -82,7 +82,6 @@ def upload_files(model, args):
 
 
 def run_template(model, args):
-    debug = os.getenv("WINGS_DEBUG", False)
     log.debug("Run Template")
     run_args = args.copy()
     for k, v in args.items():
@@ -94,11 +93,8 @@ def run_template(model, args):
     if ret and ret["success"]:
         templates = ret["data"]["templates"]
         log.debug(len(templates))
-        if debug is False:
-            runid = cli.run_workflow(templates[0], ret["data"]["seed"])
-            log.info("Started run with id <%s>" % runid)
-        else:
-            log.info("Debug mode enabled, skipping running template")
+        runid = cli.run_workflow(templates[0], ret["data"]["seed"])
+        log.info("Started run with id <%s>" % runid)
 
 
 def throttle(chunk_size=15, wait=60):
