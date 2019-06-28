@@ -52,7 +52,7 @@ def _generate_production_cost(**kwargs):
 
 
 def _generate_sim_price(**kwargs):
-    o = Path("./economic/inputs/" + kwargs["unique_id"])
+    o = Path("./economic/inputs/%s-sim-price.csv" % kwargs["unique_id"])
     with o.open("w") as f:
         f.write(
             """,p
@@ -67,7 +67,18 @@ sorghum,0.3742
 
 
 def _generate_sim_production_cost(**kwargs):
-    return "file:simproductioncost.csv"
+    o = Path("./economic/inputs/%s-sim-production_cost.csv" % kwargs["unique_id"])
+    with o.open("w") as f:
+        f.write(
+            """,c1,c2
+cassava,0.26064
+groundnuts,0.80474
+maize,0.30263
+sesame,0.74735
+sorghum,0.3742
+"""
+        )
+    return o
 
 
 def _generate_supply_elasticity(**kwargs):
