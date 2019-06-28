@@ -100,7 +100,6 @@ def _generate_sim_production_cost(
             w.writerow(
                 (c, c1 + (c1 * sim_production_c1), c2 + (c2 * sim_production_c2))
             )
-            print((c, c1 + (c1 * sim_production_c1), c2 + (c2 * sim_production_c2)))
     return o
 
 
