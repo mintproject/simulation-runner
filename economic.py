@@ -2,6 +2,7 @@
 """Economic Model."""
 
 import os
+import csv
 from pathlib import Path
 
 __WINGS_TEMPLATE_NAME__ = "economic-v5-standalone"
@@ -19,8 +20,11 @@ __IO_TYPES__ = {
 
 
 def process_input(kwargs):
+    if kwargs["disabled"] != "FALSE":
+        return None
+
     # Create input directory
-    input_dir = "./economic/inputs/"
+    input_dir = "./economic/inputs/%s" % kwargs["unique_id"]
     if not os.path.exists(input_dir):
         os.makedirs(input_dir)
 
@@ -51,33 +55,52 @@ def _generate_production_cost(**kwargs):
     return "file:productioncost.csv"
 
 
-def _generate_sim_price(**kwargs):
-    o = Path("./economic/inputs/%s-sim-price.csv" % kwargs["unique_id"])
+def _generate_sim_price(unique_id, crop, price, sim_price, **kwargs):
+    o = Path("./economic/inputs/%s/%s-simprice.csv" % (unique_id, unique_id))
+
     with o.open("w") as f:
-        f.write(
-            """,p
-cassava,0.26064
-groundnuts,0.80474
-maize,0.30263
-sesame,0.74735
-sorghum,0.3742
-"""
-        )
+        w = csv.writer(f)
+
+        crop = crop.split(",")
+        price = price.split(",")
+        sim_price = float(sim_price) / 100
+
+        w.writerow(["", "p"])
+        for c, p in zip(crop, price):
+            p = float(p)
+            w.writerow((c, p + (p * sim_price)))
+
     return o
 
 
-def _generate_sim_production_cost(**kwargs):
-    o = Path("./economic/inputs/%s-sim-production_cost.csv" % kwargs["unique_id"])
+def _generate_sim_production_cost(
+    unique_id,
+    crop,
+    production_cost_c1,
+    production_cost_c2,
+    sim_production_c1,
+    sim_production_c2,
+    **kwargs
+):
+    o = Path("./economic/inputs/%s/%s-simproductioncost.csv" % (unique_id, unique_id))
     with o.open("w") as f:
-        f.write(
-            """,c1,c2
-cassava,0.26064
-groundnuts,0.80474
-maize,0.30263
-sesame,0.74735
-sorghum,0.3742
-"""
-        )
+        w = csv.writer(f)
+
+        crop = crop.split(",")
+        production_cost_c1 = production_cost_c1.split(",")
+        production_cost_c2 = production_cost_c2.split(",")
+        sim_production_c1 = float(sim_production_c1) / 100
+        sim_production_c2 = float(sim_production_c2) / 100
+
+        w.writerow(["", "c1", "c2"])
+        for c, c1, c2 in zip(crop, production_cost_c1, production_cost_c2):
+            c1 = float(c1)
+            c2 = float(c2)
+
+            w.writerow(
+                (c, c1 + (c1 * sim_production_c1), c2 + (c2 * sim_production_c2))
+            )
+            print((c, c1 + (c1 * sim_production_c1), c2 + (c2 * sim_production_c2)))
     return o
 
 
