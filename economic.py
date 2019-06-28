@@ -29,6 +29,7 @@ def process_input(kwargs):
         os.makedirs(input_dir)
 
     return {
+        "unique-id": kwargs["unique_id"],
         "cycles-data": _generate_cycles_data(**kwargs),
         "land-input": _generate_land_input(**kwargs),
         "price": _generate_price(**kwargs),
