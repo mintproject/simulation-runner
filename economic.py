@@ -45,15 +45,15 @@ def _generate_cycles_data(**kwargs):
 
 
 def _generate_land_input(**kwargs):
-    return "file:landinput.csv"
+    return "file:pongo-landinput.csv"
 
 
 def _generate_price(**kwargs):
-    return "file:price.csv"
+    return "file:pongo-price.csv"
 
 
 def _generate_production_cost(**kwargs):
-    return "file:productioncost.csv"
+    return "file:pongo-productioncost.csv"
 
 
 def _generate_sim_price(unique_id, crop, price, sim_price, **kwargs):
