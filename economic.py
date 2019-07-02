@@ -20,7 +20,7 @@ __IO_TYPES__ = {
 
 
 def process_input(kwargs):
-    if kwargs["disabled"] != "FALSE":
+    if kwargs["disabled"] != "False":
         return None
 
     # Create input directory

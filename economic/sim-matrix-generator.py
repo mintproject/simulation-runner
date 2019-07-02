@@ -21,7 +21,7 @@ column_names = [
 
 
 country = ["South Sudan"]
-disabled = ["False"]
+disabled = [False]
 crop = ["cassava", "groundnuts", "maize", "sesame", "sorghum"]
 
 price = [0.26064, 0.80474, 0.30263, 0.74735, 0.3742]
