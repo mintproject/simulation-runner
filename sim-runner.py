@@ -68,7 +68,7 @@ def _main():
     args = parser.parse_args()
     if args.debug:
         os.environ["WINGS_DEBUG"] = "1"
-        _utils.init_logger()
+    _utils.init_logger()
 
     run_simulations(**vars(args))
 
