@@ -69,7 +69,7 @@ def _generate_sim_price(unique_id, crop, price, sim_price, **kwargs):
         w.writerow(["", "p"])
         for c, p in zip(crop, price):
             p = float(p)
-            w.writerow((c, p + (p * sim_price)))
+            w.writerow((c, round(p + (p * sim_price), 2)))
 
     return o
 
@@ -99,7 +99,11 @@ def _generate_sim_production_cost(
             c2 = float(c2)
 
             w.writerow(
-                (c, c1 + (c1 * sim_production_c1), c2 + (c2 * sim_production_c2))
+                (
+                    c,
+                    round(c1 + (c1 * sim_production_c1), 2),
+                    round(c2 + (c2 * sim_production_c2), 2),
+                )
             )
     return o
 
