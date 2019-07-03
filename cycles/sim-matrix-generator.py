@@ -2,6 +2,7 @@
 """Cycles Simulation Matrix Generator."""
 
 import csv
+import sys
 import random
 from itertools import *
 
@@ -100,7 +101,8 @@ rows = list(
 
 random.seed(10)
 
-with open("sim-matrix.csv", "w") as f:
+f = sys.argv[1] if len(sys.argv) > 1 else "sim-matrix.csv"
+with open(f, "w") as f:
     w = csv.writer(f)
     w.writerow(column_names)
     for row in rows:
