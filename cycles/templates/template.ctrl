@@ -1,6 +1,6 @@
 SIMULATION_START_YEAR   $start_year
 SIMULATION_END_YEAR     $end_year
-ROTATION_SIZE           1
+ROTATION_SIZE           $rotation_size
 ## SIMULATION OPTIONS ##
 USE_REINITIALIZATION    $reinit
 ADJUSTED_YIELDS         0

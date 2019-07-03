@@ -19,23 +19,47 @@ __IO_TYPES__ = {
 }
 
 
-def _process_operation_file(kwargs, input_folder_dir, baseline=False):
-    with open("cycles/templates/template.operation") as t_op_file:
-        src = Template(t_op_file.read())
-        op_data = {
-            "crop_name": kwargs["crop"],
-            "fertilization_date": int(kwargs["start_planting_date"]) - 10,
-            "fertilization_rate": kwargs["fertilizer_rate"],
-            "start_planting_date": kwargs["start_planting_date"],
-            "end_planting_date": kwargs["end_planting_date"],
-            "tillage_date": int(kwargs["start_planting_date"]) + 20,
-        }
-        result = src.substitute(op_data)
-        f = "baseline_" + kwargs["unique_id"] if baseline else kwargs["unique_id"]
-        op_filename = Path(input_folder_dir + "/" + f + ".operation")
-        with op_filename.open("w") as op_file:
-            op_file.write(result)
-            return op_filename
+def _process_operation_file(kwargs, input_folder_dir, start_year=2000, end_year=2017, baseline=False):
+
+    year_count = 1
+    operation_contents = ""
+
+    while (year_count <= end_year - start_year + 1):
+        with open("cycles/templates/template.operation") as t_op_file:
+            src = Template(t_op_file.read())
+            op_data = {
+                "year_count": year_count,
+                "crop_name": kwargs["crop"],
+                "fertilization_date": int(kwargs["start_planting_date"]) - 10,
+                "fertilization_rate": kwargs["fertilizer_rate"],
+                "start_planting_date": kwargs["start_planting_date"],
+                "end_planting_date": kwargs["end_planting_date"],
+                "tillage_date": int(kwargs["start_planting_date"]) + 20,
+            }
+            result = src.substitute(op_data)
+            operation_contents += result
+
+            # handling weeds
+            if kwargs["weed"] == "True":
+                with open("cycles/templates/template-weed.operation") as t_wd_file:
+                    wd_src = Template(t_wd_file.read())
+                    wd_data = {
+                        "year_count": year_count,
+                        "weed_planting_date": int(kwargs["start_planting_date"]) + 7,
+                        "weed_fraction": kwargs["weed_fraction"]
+                    }
+                    wd_result = wd_src.substitute(wd_data)
+                    operation_contents += wd_result + "\n"
+
+            year_count += 1
+
+    # writing operations file
+    f = "baseline_" + kwargs["unique_id"] if baseline else kwargs["unique_id"]
+    op_filename = Path(input_folder_dir + "/" + f + ".operation")
+    with op_filename.open("w") as op_file:
+        op_file.write(operation_contents)
+        return op_filename
+
     return None
 
 
@@ -45,6 +69,7 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False):
         ctrl_data = {
             "start_year": 2000,
             "end_year": 2017,
+            "rotation_size": 18,
             "crop_file": "crops.crop",
             "operation_file": op_filename,
             "soil_file": kwargs["soil"],
@@ -62,9 +87,14 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False):
 
 def process_input(kwargs):
 
-    if kwargs["crop"] != "Maize" or kwargs["forcing"] == "True":
+    # temporary conditions to limit number of executions
+    if kwargs["crop"] != "Maize" \
+        or kwargs["forcing"] == "True" \
+        or kwargs["weather"] != "met8.88Nx27.12E.weather" \
+        or kwargs["planting_date_fixed"] != "True" \
+        or kwargs["start_planting_date"] != "100" \
+        or kwargs["fertilizer_rate"] != "0.00"        :
         return None
-
     if kwargs["planting_date_fixed"] == "True":
          kwargs["end_planting_date"] = -999
 
@@ -78,7 +108,7 @@ def process_input(kwargs):
     baseline_kwargs["start_planting_date"] = 100
     baseline_kwargs["fertilizer_rate"] = 156.25
     baseline_op_filename = _process_operation_file(
-        baseline_kwargs, input_folder_dir, True
+        baseline_kwargs, input_folder_dir, baseline=True
     )
     baseline_ctrl_filename = _process_ctrl_file(
         baseline_kwargs, input_folder_dir, baseline_op_filename.name, True
