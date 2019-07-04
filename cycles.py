@@ -6,7 +6,7 @@ import os
 from pathlib import Path
 from string import Template
 
-__WINGS_TEMPLATE_NAME__ = "cycles_v2_standalone"
+__WINGS_TEMPLATE_NAME__ = "cycles_v2_standalone_fertilizer_increase"
 
 __IO_TYPES__ = {
     "cycles_crops": "CyclesCrops",
@@ -14,12 +14,14 @@ __IO_TYPES__ = {
     "cycles_operation": "CyclesOperation",
     "cycles_ctrl1": "CyclesCtrl",
     "cycles_operation1": "CyclesOperation",
+    "cycles_ctrl2": "CyclesCtrl",
+    "cycles_operation2": "CyclesOperation",
     "cycles_soil": "CyclesSoil",
     "cycles_weather": "CyclesWeather",
 }
 
 
-def _process_operation_file(kwargs, input_folder_dir, start_year=2000, end_year=2017, baseline=False):
+def _process_operation_file(kwargs, input_folder_dir, start_year=2000, end_year=2017, baseline=False, fertilizer_increase=False):
 
     year_count = 1
     operation_contents = ""
@@ -40,7 +42,7 @@ def _process_operation_file(kwargs, input_folder_dir, start_year=2000, end_year=
             operation_contents += result
 
             # handling weeds
-            if kwargs["weed"] == "True":
+            if float(kwargs["weed_fraction"]) > 0:
                 with open("cycles/templates/template-weed.operation") as t_wd_file:
                     wd_src = Template(t_wd_file.read())
                     wd_data = {
@@ -55,6 +57,9 @@ def _process_operation_file(kwargs, input_folder_dir, start_year=2000, end_year=
 
     # writing operations file
     f = "baseline_" + kwargs["unique_id"] if baseline else kwargs["unique_id"]
+    if fertilizer_increase:
+        f = f + "_fertilizer_increase"
+        input_folder_dir = input_folder_dir + "_fertilizer_increase"
     op_filename = Path(input_folder_dir + "/" + f + ".operation")
     with op_filename.open("w") as op_file:
         op_file.write(operation_contents)
@@ -63,7 +68,7 @@ def _process_operation_file(kwargs, input_folder_dir, start_year=2000, end_year=
     return None
 
 
-def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False):
+def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False, fertilizer_increase=False):
     with open("cycles/templates/template.ctrl") as t_ctrl_file:
         src = Template(t_ctrl_file.read())
         ctrl_data = {
@@ -79,6 +84,9 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False):
         result = src.substitute(ctrl_data)
 
         f = "baseline_" + kwargs["unique_id"] if baseline else kwargs["unique_id"]
+        if fertilizer_increase:
+            f = f + "_fertilizer_increase"
+            input_folder_dir = input_folder_dir + "_fertilizer_increase"
         ctrl_filename = Path(input_folder_dir + "/" + f + ".ctrl")
         with ctrl_filename.open("w") as ctrl_file:
             ctrl_file.write(result)
@@ -102,6 +110,8 @@ def process_input(kwargs):
     input_folder_dir = "./cycles/inputs/" + kwargs["unique_id"]
     if not os.path.exists(input_folder_dir):
         os.makedirs(input_folder_dir)
+    if not os.path.exists(input_folder_dir + "_fertilizer_increase"):
+        os.makedirs(input_folder_dir + "_fertilizer_increase")
 
     # baseline args
     baseline_kwargs = kwargs.copy()
@@ -118,14 +128,20 @@ def process_input(kwargs):
     op_filename = _process_operation_file(kwargs, input_folder_dir)
     ctrl_filename = _process_ctrl_file(kwargs, input_folder_dir, op_filename.name)
 
+    op_fi_filename = _process_operation_file(kwargs, input_folder_dir, fertilizer_increase=True)
+    ctrl_fi_filename = _process_ctrl_file(kwargs, input_folder_dir, op_fi_filename.name, fertilizer_increase=True)
+
     return {
         "cycles_ctrl": baseline_ctrl_filename,
         "cycles_operation": baseline_op_filename,
         "cycles_crops": "file:crops.crop",
         "cycles_ctrl1": ctrl_filename,
         "cycles_operation1": op_filename,
+        "cycles_ctrl2": ctrl_fi_filename,
+        "cycles_operation2": op_fi_filename,
         "cycles_soil": "file:pongo.soil",
         "cycles_weather": "file:" + kwargs["weather"],
         "unique_id": kwargs["unique_id"],
+        "unique_id1": kwargs["unique_id"] + "_fertilizer_increase",
         "crop_name": kwargs["crop"],
     }
