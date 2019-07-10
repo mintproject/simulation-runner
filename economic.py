@@ -31,9 +31,9 @@ def process_input(kwargs):
         "land-input": _generate_land_input(**kwargs),
         "price": _generate_price(**kwargs),
         "production-cost": _generate_production_cost(**kwargs),
-        "crop-price-adjustment": "%r" % kwargs["sim_price"],
-        "land-cost-adjustment": "%r" % kwargs["sim_production_c1"],
-        "fertilizer-cost-adjustment": "%r" % kwargs["sim_production_c2"],
+        "crop-price-adjustment": kwargs["sim_price"],
+        "land-cost-adjustment": kwargs["sim_production_c1"],
+        "fertilizer-cost-adjustment": kwargs["sim_production_c2"],
         "supply-elasticity": _generate_supply_elasticity(**kwargs),
     }
 
