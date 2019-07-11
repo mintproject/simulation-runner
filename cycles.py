@@ -38,6 +38,8 @@ def _process_operation_file(kwargs, input_folder_dir, start_year=2000, end_year=
                 "end_planting_date": kwargs["end_planting_date"],
                 "tillage_date": int(kwargs["start_planting_date"]) + 20,
             }
+            if fertilizer_increase:
+                op_data["fertilization_rate"] = float(op_data["fertilization_rate"]) * 1.1
             result = src.substitute(op_data)
             operation_contents += result
 
@@ -74,7 +76,7 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False, fe
         ctrl_data = {
             "start_year": 2000,
             "end_year": 2017,
-            "rotation_size": 18,
+            "rotation_size": 1,
             "crop_file": "crops.crop",
             "operation_file": op_filename,
             "soil_file": kwargs["soil"],
@@ -96,13 +98,17 @@ def _process_ctrl_file(kwargs, input_folder_dir, op_filename, baseline=False, fe
 def process_input(kwargs):
 
     # temporary conditions to limit number of executions
-    if kwargs["crop"] != "Maize" \
-        or kwargs["forcing"] == "True" \
-        or kwargs["weather"] != "met8.88Nx27.12E.weather" \
-        or kwargs["planting_date_fixed"] != "True" \
-        or kwargs["start_planting_date"] != "100" \
-        or kwargs["fertilizer_rate"] != "0.00"        :
+    if kwargs["forcing"] == "True":
         return None
+
+    # if kwargs["forcing"] == "True" \
+    #     or kwargs["weather"] != "met8.88Nx27.12E.weather" \
+    #     or kwargs["planting_date_fixed"] != "True" \
+    #     or kwargs["start_planting_date"] != "100" \
+    #     or kwargs["fertilizer_rate"] != "78.13"        :
+    #     return None
+
+    # set end planting date if fixed
     if kwargs["planting_date_fixed"] == "True":
          kwargs["end_planting_date"] = -999
 
