@@ -2,17 +2,28 @@ import os
 import re
 import json
 from .userop import UserOperation
+import requests
+from urllib.parse import urlencode, quote_plus
 
 
 class ManageData(UserOperation):
 
-    def __init__(self, server, internal_server, userid, domain):
-        super(ManageData, self).__init__(server, internal_server, userid, domain)
+    def __init__(self, server, exportURL, userid, domain):
+        super(ManageData, self).__init__(server, exportURL, userid, domain)
         self.dcdom = self.get_export_url() + "data/ontology.owl#"
         self.dclib = self.get_export_url() + "data/library.owl#"
 
+    def check_request(self, resp):
+        try:
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            print(err)
+        except requests.exceptions.RequestException as err:
+            print(err)
+        return resp
+
     def get_type_id(self, typeid):
-        if typeid == None:
+        if typeid is None:
             return 'http://www.wings-workflows.org/ontology/data.owl#DataObject'
         elif not re.match(r"(http:|https:)//", typeid):
             return self.dcdom + typeid
@@ -29,8 +40,10 @@ class ManageData(UserOperation):
         parent = self.get_type_id(parent)
         dtype = self.get_type_id(dtype)
         postdata = {'parent_type': parent, 'data_type': dtype}
-        self.session.post(self.get_request_url() +
-                          'data/newDataType', postdata)
+        resp = self.session.post(self.get_request_url() +
+                                 'data/newDataType', postdata)
+        self.check_request(resp)
+        return dtype
 
     def add_type_properties(self, dtype, properties):
         xsd = 'http://www.w3.org/2001/XMLSchema#'
@@ -48,8 +61,9 @@ class ManageData(UserOperation):
         dtype = self.get_type_id(dtype)
         dataid = self.get_data_id(dataid)
         postdata = {'data_id': dataid, 'data_type': dtype}
-        self.session.post(self.get_request_url() +
-                          'data/addDataForType', postdata)
+        resp = self.session.post(self.get_request_url() +
+                                 'data/addDataForType', postdata)
+        self.check_request(resp)
 
     def del_data_type(self, dtype):
         dtype = self.get_type_id(dtype)
@@ -69,17 +83,22 @@ class ManageData(UserOperation):
 
     def get_data_description(self, dataid):
         dataid = self.get_data_id(dataid)
-        postdata = {'data_id': dataid}
-        resp = self.session.post(
-            self.get_request_url() + 'data/getDataJSON', postdata)
+        params = {'data_id': dataid}
+        resp = self.session.get(
+            self.get_request_url() + 'data/getDataJSON', params=params)
         return resp.json()
 
     def get_datatype_description(self, dtype):
         dtype = self.get_type_id(dtype)
-        postdata = {'data_type': dtype}
-        resp = self.session.post(
-            self.get_request_url() + 'data/getDataTypeJSON', postdata)
-        return resp.json()
+        params = {'data_type': dtype}
+        try:
+            resp = self.session.get(
+                self.get_request_url() + 'data/getDataTypeJSON', params=params)
+            resp.raise_for_status()
+        except requests.exceptions.HTTPError as err:
+            print(err)
+        except requests.exceptions.RequestException as err:
+            print(err)
 
     def upload_data_for_type(self, filepath, dtype):
         dtype = self.get_type_id(dtype)
@@ -105,8 +124,9 @@ class ManageData(UserOperation):
                     {'name': self.dcdom + key, 'value': metadata[key]})
         postdata = {'propvals_json': json.dumps(
             pvals), 'data_id': self.get_data_id(dataid)}
-        self.session.post(self.get_request_url() +
-                          'data/saveDataJSON', postdata)
+        resp = self.session.post(self.get_request_url() +
+                                 'data/saveDataJSON', postdata)
+        self.check_request(resp)
 
     def set_data_location(self, dataid, location):
         postdata = {'data_id': self.get_data_id(dataid), 'location': location}
