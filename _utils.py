@@ -33,7 +33,7 @@ def wings_config(wings_config):
     return (
         {
             "server": config["default"]["serverWings"].strip("/"),
-            "internal_server": config["default"]["exportWingsURL"],
+            "exportURL": config["default"]["exportWingsURL"],
             "userid": config["default"]["userWings"],
             "domain": config["default"]["domainWings"],
         },
