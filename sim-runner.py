@@ -21,7 +21,9 @@ def run_simulations(
         )(model.process_input)
         for row in _utils.simulation_matrix(simulation_matrix):
             log.debug("Simulation Matrix Row: %s" % row)
-            args = _throttled_func(row)
+            args = _throttled_func(**row)
+            log.debug("Run Args: %s" % args)
+
             if args is not None and dry_run is False:
                 _utils.upload_files(model, args)
                 _utils.run_template(model, args)

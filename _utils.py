@@ -101,7 +101,7 @@ def throttle(chunk_size=15, wait=60):
     def wrap(f):
         @functools.wraps(f)
         def wrapped_f(*args, **kwargs):
-            rv = f(*args)
+            rv = f(*args, **kwargs)
             if rv is not None:
                 if wrapped_f.count % chunk_size == 0 and wrapped_f.count != 0:
                     log.info(
