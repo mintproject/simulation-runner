@@ -14,7 +14,7 @@ class Planner(UserOperation):
         self.xsdns = "http://www.w3.org/2001/XMLSchema#"
 
     def _set_bindings(self, invar, val, dataBindings, parameterBindings, parameterTypes):
-        if isinstance(val, basestring) and val.startswith('file:'):
+        if isinstance(val, str) and val.startswith('file:'):
             data = dataBindings.get(self.wflowns + invar, [])
             data.append(self.libns + val[5:])
             dataBindings[self.wflowns + invar] = data
